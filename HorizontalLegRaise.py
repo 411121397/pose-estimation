@@ -2,7 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-
+# Initialize mediapipe pose and drawing utilities
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 
@@ -10,12 +10,13 @@ mp_pose = mp.solutions.pose
 video_path = "poseVideos/11.mp4"  
 
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(video_path)
 
 
 counter = 0
 stage = None
-
+frame_skip = 2  
+frame_count = 0
 
 # Setup Mediapipe Pose with specified confidence levels
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -24,7 +25,11 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         if not ret:
             break
 
-        
+        frame_count += 1
+
+        # Skip frames for faster video processing
+        if frame_count % frame_skip != 0:
+            continue
 
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         image.flags.writeable = False
@@ -41,22 +46,22 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                      landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value].y]
 
             
-            #print("Hip:", hip, "Ankle:", ankle)
+           # print("Hip:", hip, "Ankle:", ankle)
 
-            
+           
             if ankle[0] > hip[0] + 0.1:  # Leg raised to the side
                 stage = "up"
             elif ankle[0] <= hip[0] + 0.05:  # Leg returns down
                 if stage == "up":
                     stage = "down"
-                    counter += 1 
+                    counter += 1  
 
         except Exception as e:
             print("Error:", e)
             pass
 
         
-        cv2.rectangle(image, (0, 0), (225, 73), (255, 0, 0), -1)
+        cv2.rectangle(image, (0, 0), (225, 73), (255, 0, 0), -1)  
         cv2.putText(image, 'REPS', (15, 12),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
         cv2.putText(image, str(counter),
@@ -73,8 +78,8 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                   mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                   mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
-       
-        cv2.imshow('Horizontal Leg Raise', image)
+        
+        cv2.imshow('Side Leg Raise ', image)
 
         
         if cv2.waitKey(10) & 0xFF == ord('q'):
