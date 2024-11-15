@@ -73,7 +73,7 @@ class poseDetector():
 
 
 def main():
-    cap = cv2.VideoCapture('PoseVideos/6.mp4')  # Use a valid video source here
+    cap = cv2.VideoCapture('PoseVideos/5.mp4')  # Use a valid video source here
     pTime = 0
     # Use correct arguments: static_image_mode, model_complexity, smooth_landmarks, etc.
     detector = poseDetector(static_image_mode=False, model_complexity=1, smooth_landmarks=True,
