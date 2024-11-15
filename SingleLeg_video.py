@@ -119,7 +119,7 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                   mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
         # Display the output
-        cv2.imshow('Mediapipe Feed', image)
+        cv2.imshow('Single Leg Raise', image)
 
         # Break the loop if 'q' key is pressed
         if cv2.waitKey(10) & 0xFF == ord('q'):
