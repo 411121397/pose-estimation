@@ -5,7 +5,7 @@ import numpy as np
 # Initialize mediapipe pose and drawing utilities
 mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
-
+feed=" "
 
 def calculate_angle(a, b, c):
     """
@@ -65,9 +65,9 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
             
             # straight leg
-            if angle > 58:  # Arm fully extended, in "down" position
+            if angle > 45:  
                 feed = "too down"
-            elif angle < 45 :  # Arm in "up" position after full curl
+            elif angle < 75 :  
                 feed = "too up"
             else:
                 feed="good"
@@ -84,8 +84,8 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
         except:
             pass
 
-       # Render the counter and stage text on the image
-        cv2.rectangle(image, (0, 0), (225, 73), (255, 0, 0), -1)  # Blue box background (BGR: 255, 0, 0)
+       
+        cv2.rectangle(image, (0, 0), (225, 73), (255, 0, 0), -1) 
         cv2.putText(image, 'REPS', (15, 12),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
         cv2.putText(image, str(counter),
@@ -107,10 +107,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                                   mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                   mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
-        # Display the output
-        cv2.imshow('Mediapipe Feed', image)
+        
+        cv2.imshow('Single Leg Raise', image)
 
-        # Break the loop if 'q' key is pressed
+        
         if cv2.waitKey(10) & 0xFF == ord('q'):
             break
 
