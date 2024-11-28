@@ -5,7 +5,6 @@ import threading
 
 # Import your exercise modules
 import Arm_Extension_Camera
-<<<<<<< HEAD
 #import Arm_Extension_video
 import ElbowUpDown_Camera
 #import ElbowUpDown_Video
@@ -15,7 +14,7 @@ import SingleLeg_camera
 #import SingleLeg_video
 import wallWalk_leftHand_Camera
 #import wallWalk_LeftHand_video
-=======
+
 import Arm_Extension_video
 import ElbowUpDown_Camera
 import ElbowUpDown_Video
@@ -25,7 +24,7 @@ import SingleLeg_camera
 import SingleLeg_video
 import wallWalk_leftHand_Camera
 import wallWalk_LeftHand_video
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
+
 
 def start_Arm_Extension_Camera():
     threading.Thread(target=Arm_Extension_Camera.run_exercise).start()
@@ -70,8 +69,4 @@ def main():
     root.mainloop()
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     main()
-=======
-    main()
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
