@@ -2,10 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-<<<<<<< HEAD
-=======
 
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
 def calculate_angle(a, b, c):
     """
@@ -109,7 +106,7 @@ def run_exercise():
                                     mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                     mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
-<<<<<<< HEAD
+
 def run_exercise():
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
@@ -196,12 +193,10 @@ def run_exercise():
 
             cv2.imshow('Single Leg Raise', image)
 
-=======
-            
+
             cv2.imshow('Single Leg Raise', image)
 
             
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
@@ -209,11 +204,9 @@ def run_exercise():
     cap.release()
     cv2.destroyAllWindows()
 
-<<<<<<< HEAD
+
 
 if __name__ == "__main__":
     run_exercise()
-=======
 if __name__ == "__main__":
     run_exercise()
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24

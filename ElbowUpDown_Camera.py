@@ -2,11 +2,6 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
-
 def calculate_angle(a, b, c):
     """
     Calculate the angle between three points a, b, and c.
@@ -24,19 +19,10 @@ def calculate_angle(a, b, c):
 
     return angle
 
-<<<<<<< HEAD
-
 def run_exercise():
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
 
-=======
-def run_exercise():
-    mp_drawing = mp.solutions.drawing_utils
-    mp_pose = mp.solutions.pose    
-
-   
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -48,6 +34,7 @@ def run_exercise():
         while cap.isOpened():
             ret, frame = cap.read()
             if not ret:
+                print("Unable to read from webcam.")
                 break
 
             # Convert the frame to RGB and make it non-writable to improve performance
@@ -55,90 +42,80 @@ def run_exercise():
             image.flags.writeable = False
             results = pose.process(image)
 
-<<<<<<< HEAD
-=======
-            
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
             # Extract pose landmarks
             try:
                 landmarks = results.pose_landmarks.landmark
+
                 # Get coordinates for shoulder, elbow, and wrist
-                shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
-                            landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
-                elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
-<<<<<<< HEAD
-                         landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-                wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-                         landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-=======
-                        landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
-                wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-                        landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
+                shoulder = [
+                    landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
+                    landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y,
+                ]
+                elbow = [
+                    landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+                    landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y,
+                ]
+                wrist = [
+                    landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+                    landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y,
+                ]
 
                 # Calculate the angle between shoulder, elbow, and wrist
                 angle = calculate_angle(shoulder, elbow, wrist)
 
                 # Visualize the angle at the elbow
-                cv2.putText(image, str(int(angle)),
-                            tuple(np.multiply(elbow, [640, 480]).astype(int)),
-                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
+                cv2.putText(
+                    image,
+                    str(int(angle)),
+                    tuple(np.multiply(elbow, [640, 480]).astype(int)),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    (255, 255, 255),
+                    2,
+                    cv2.LINE_AA,
+                )
 
                 # Curl counter logic
                 if angle > 160:
                     stage = "down"
-                if angle < 30 and stage == 'down':
+                if angle < 30 and stage == "down":
                     stage = "up"
                     counter += 1
                     print("Curls:", counter)
 
-            except:
+            except Exception as e:
+                print("Error processing landmarks:", e)
                 pass
 
             # Render curl counter on image
             cv2.rectangle(image, (0, 0), (225, 73), (245, 117, 16), -1)
-            cv2.putText(image, 'REPS', (15, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
-            cv2.putText(image, str(counter),
-                        (10, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            cv2.putText(image, 'STAGE', (65, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
-            cv2.putText(image, stage,
-                        (60, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "REPS", (15, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(image, str(counter), (10, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
+            cv2.putText(image, "STAGE", (65, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 1, cv2.LINE_AA)
+            cv2.putText(image, stage if stage else "None", (60, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
 
             # Draw pose landmarks on the image
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-<<<<<<< HEAD
-                                      mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                      mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+            mp_drawing.draw_landmarks(
+                image,
+                results.pose_landmarks,
+                mp_pose.POSE_CONNECTIONS,
+                mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+                mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2),
+            )
 
-
-=======
-                                    mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                    mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-
-            =
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
-            cv2.imshow('Mediapipe Feed', image)
+            cv2.imshow("Mediapipe Feed", image)
 
             # Break the loop if 'q' key is pressed
-            if cv2.waitKey(10) & 0xFF == ord('q'):
+            if cv2.waitKey(10) & 0xFF == ord("q"):
                 break
 
     # Release resources
     cap.release()
     cv2.destroyAllWindows()
 
-<<<<<<< HEAD
 
 if __name__ == "__main__":
     run_exercise()
-=======
-if __name__ == "__main__":
-    run_exercise()
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
