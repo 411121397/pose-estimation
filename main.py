@@ -8,7 +8,7 @@ import HorizontalLegRaise_camera
 import SingleLeg_camera
 import wallWalk_leftHand_Camera
 
-
+# Define a function to start exercises
 def start_Arm_Extension_Camera():
     threading.Thread(target=Arm_Extension_Camera.run_exercise).start()
 
@@ -24,50 +24,131 @@ def start_SingleLeg_camera():
 def start_wallWalk_leftHand_Camera():
     threading.Thread(target=wallWalk_leftHand_Camera.run_exercise).start()
 
+# Function to clear the current window and show the main page again
+def show_main_page(window):
+    for widget in window.winfo_children():
+        widget.destroy()
 
-def open_arm_injuries():
-    # Create a new window for Arm Injuries
-    arm_window = tk.Toplevel()
-    arm_window.title("Arm Injuries")
-    arm_window.geometry("500x400")
+    # Add the title label
+    title_label = tk.Label(
+        window,
+        text="My Pocket Physio",
+        font=("Arial", 20, "bold"),
+        bg="#C5EBE8",
+        fg="#008878"
+    )
+    title_label.pack(pady=(30, 10))
 
-    # Add buttons for arm injury exercises
-    btn_elbow_up_down = tk.Button(arm_window, text="Elbow Up Down", command=start_ElbowUpDown_Camera)
-    btn_elbow_up_down.pack(pady=20)
+    # Add a body of text
+    body_text = tk.Label(
+        window,
+        text="Welcome to My Pocket Physio, the solution to all your body aches and injuries.",
+        font=("Arial", 16),
+        bg="#C5EBE8",
+        fg="#008878",
+        wraplength=700,
+        justify="center"
+    )
+    body_text.pack(pady=(10, 30))
 
-    btn_arm_extension = tk.Button(arm_window, text="Arm Extension", command=start_Arm_Extension_Camera)
-    btn_arm_extension.pack(pady=20)
+    # Add text for instructions
+    instruction_text = tk.Label(
+        window,
+        text="Please select your injury type:",
+        font=("Arial", 14),
+        bg="#C5EBE8",
+        fg="#008878"
+    )
+    instruction_text.pack(pady=20)
 
-    btn_wall_walk = tk.Button(arm_window, text="Wall Walk Left Hand", command=start_wallWalk_leftHand_Camera)
-    btn_wall_walk.pack(pady=20)
+    # Add buttons for injury types
+    btn_arm_injury = tk.Button(
+        window,
+        text="Arm Injury",
+        command=lambda: open_injury_page(window, "Arm Injuries"),
+        font=("Arial", 16),
+        width=20,
+        bg="#008878",
+        fg="white"
+    )
+    btn_arm_injury.pack(pady=20)
 
+    btn_knee_injury = tk.Button(
+        window,
+        text="Knee Injury",
+        command=lambda: open_injury_page(window, "Knee Injuries"),
+        font=("Arial", 16),
+        width=20,
+        bg="#008878",
+        fg="white"
+    )
+    btn_knee_injury.pack(pady=20)
 
-def open_knee_injuries():
-    # Create a new window for Knee Injuries
-    knee_window = tk.Toplevel()
-    knee_window.title("Knee Injuries")
-    knee_window.geometry("500x400")
+# Function to show injury pages (both arm and knee)
+def open_injury_page(window, injury_type):
+    # Clear the current window content
+    for widget in window.winfo_children():
+        widget.destroy()
 
-    # Add buttons for knee injury exercises
-    btn_horizontal_leg_raise = tk.Button(knee_window, text="Horizontal Leg Raise", command=start_HorizontalLegRaise_camera)
-    btn_horizontal_leg_raise.pack(pady=20)
+    # Add the title for the injury page
+    title_label = tk.Label(
+        window,
+        text=injury_type,
+        font=("Arial", 18, "bold"),
+        bg="#C5EBE8",
+        fg="#008878"
+    )
+    title_label.pack(pady=20)
 
-    btn_single_leg = tk.Button(knee_window, text="Single Leg", command=start_SingleLeg_camera)
-    btn_single_leg.pack(pady=20)
+    # Based on the injury type, show the corresponding exercises
+    if injury_type == "Arm Injuries":
+        exercises = [
+            ("Elbow Up Down", start_ElbowUpDown_Camera),
+            ("Arm Extension", start_Arm_Extension_Camera),
+            ("Wall Walk Left Hand", start_wallWalk_leftHand_Camera)
+        ]
+    else:
+        exercises = [
+            ("Horizontal Leg Raise", start_HorizontalLegRaise_camera),
+            ("Single Leg", start_SingleLeg_camera)
+        ]
 
+    # Add buttons for exercises
+    for text, command in exercises:
+        btn = tk.Button(
+            window,
+            text=text,
+            command=command,
+            font=("Arial", 14),
+            bg="#008878",
+            fg="white",
+            width=20
+        )
+        btn.pack(pady=10)
 
+    # Add a "Back" button to return to the main page
+    btn_back = tk.Button(
+        window,
+        text="Back",
+        command=lambda: show_main_page(window),
+        font=("Arial", 14),
+        bg="#008878",
+        fg="white"
+    )
+    btn_back.pack(pady=20, anchor="w", padx=20)
+
+# Main Window
 def main():
     # Create the main application window
     root = tk.Tk()
     root.title("Pose Detection Main Menu")
-    root.geometry("500x400")
+    root.geometry("800x600")
 
-    # Add buttons for injury types
-    btn_arm_injury = tk.Button(root, text="Arm Injury", command=open_arm_injuries, font=("Arial", 14), width=20)
-    btn_arm_injury.pack(pady=50)
+    # Set the background color
+    root.configure(bg="#C5EBE8")
 
-    btn_knee_injury = tk.Button(root, text="Knee Injury", command=open_knee_injuries, font=("Arial", 14), width=20)
-    btn_knee_injury.pack(pady=50)
+    # Show the main page
+    show_main_page(root)
 
     # Start the main event loop
     root.mainloop()
