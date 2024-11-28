@@ -2,22 +2,13 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
 def calculate_angle(a, b, c):
     """
     Calculate the angle between three points a, b, and c.
     """
     a = np.array(a)  # First point
-<<<<<<< HEAD
     b = np.array(b)  # Midpoint
-=======
-    b = np.array(b)  # Midpoint 
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
     c = np.array(c)  # Endpoint
 
     radians = np.arctan2(c[1] - b[1], c[0] - b[0]) - np.arctan2(a[1] - b[1], a[0] - b[0])
@@ -29,10 +20,7 @@ def calculate_angle(a, b, c):
 
     return angle
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 def run_exercise():
     # Initialize mediapipe pose and drawing utilities
     mp_drawing = mp.solutions.drawing_utils
@@ -42,11 +30,7 @@ def run_exercise():
 
     counter = 0
     stage = None
-<<<<<<< HEAD
     feedback = ""
-=======
-
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
     # Setup Mediapipe Pose with specified confidence levels
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
@@ -67,15 +51,9 @@ def run_exercise():
                 shoulder = [landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].x,
                             landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value].y]
                 leftwrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
-<<<<<<< HEAD
                              landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
                 wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
                          landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
-=======
-                        landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
-                wrist = [landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].x,
-                        landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value].y]
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
                 # angle between shoulder, elbow, and wrist
                 angle = calculate_angle(leftwrist, shoulder, wrist)
@@ -84,7 +62,6 @@ def run_exercise():
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
 
                 # Define the stages based on angle
-<<<<<<< HEAD
                 feedback_color = (0, 255, 0)
                 if angle > 177:
                     stage = "start"
@@ -101,19 +78,11 @@ def run_exercise():
                     feedback = "Bad form! Try to bend your elbow more!"
                 else:
                     feedback = "Your arm needs to be visible"
-=======
-                if angle > 177:  
-                    stage = "start"
-                elif angle < 70 and stage == "start":  
-                    stage = "half-circle"
-                    counter += 1  
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
             except Exception as e:
                 print("Error:", e)
                 pass
 
-<<<<<<< HEAD
             # Set feedback color
             feedback_color = (0, 0, 255)  # Default to red
             if feedback == "Good form! Keep it up!":
@@ -156,33 +125,6 @@ def run_exercise():
 
             cv2.imshow('Arm Extension', image)
 
-=======
-            
-            cv2.rectangle(image, (0, 0), (225, 73), (255, 0, 0), -1)  
-
-            cv2.putText(image, 'REPS', (15, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
-            
-            cv2.putText(image, str(counter),
-                        (10, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-            
-            cv2.putText(image, 'Stage', (65, 12),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 0), 1, cv2.LINE_AA)
-            
-            cv2.putText(image, stage if stage else "None",
-                        (60, 60),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2, cv2.LINE_AA)
-
-            mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
-                                    mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                    mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-
-        
-            cv2.imshow('Arm Extension', image)
-
-            
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
 
@@ -190,9 +132,6 @@ def run_exercise():
     cap.release()
     cv2.destroyAllWindows()
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 if __name__ == "__main__":
     run_exercise()
