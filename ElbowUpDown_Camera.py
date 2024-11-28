@@ -2,6 +2,10 @@ import cv2
 import mediapipe as mp
 import numpy as np
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
 def calculate_angle(a, b, c):
     """
@@ -20,11 +24,19 @@ def calculate_angle(a, b, c):
 
     return angle
 
+<<<<<<< HEAD
 
 def run_exercise():
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
 
+=======
+def run_exercise():
+    mp_drawing = mp.solutions.drawing_utils
+    mp_pose = mp.solutions.pose    
+
+   
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
     cap = cv2.VideoCapture(0)
 
     # Curl counter variables
@@ -43,6 +55,10 @@ def run_exercise():
             image.flags.writeable = False
             results = pose.process(image)
 
+<<<<<<< HEAD
+=======
+            
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
             image.flags.writeable = True
             image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
@@ -53,9 +69,15 @@ def run_exercise():
                 shoulder = [landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].x,
                             landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value].y]
                 elbow = [landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].x,
+<<<<<<< HEAD
                          landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
                 wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
                          landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+=======
+                        landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value].y]
+                wrist = [landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].x,
+                        landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value].y]
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
 
                 # Calculate the angle between shoulder, elbow, and wrist
                 angle = calculate_angle(shoulder, elbow, wrist)
@@ -91,10 +113,17 @@ def run_exercise():
 
             # Draw pose landmarks on the image
             mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
+<<<<<<< HEAD
                                       mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                       mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
 
 
+=======
+                                    mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
+                                    mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+
+            =
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
             cv2.imshow('Mediapipe Feed', image)
 
             # Break the loop if 'q' key is pressed
@@ -105,6 +134,11 @@ def run_exercise():
     cap.release()
     cv2.destroyAllWindows()
 
+<<<<<<< HEAD
 
 if __name__ == "__main__":
     run_exercise()
+=======
+if __name__ == "__main__":
+    run_exercise()
+>>>>>>> 5379c78257fcfaaba7bce192b22ec2ff9b37cd24
