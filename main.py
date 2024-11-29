@@ -8,6 +8,9 @@ import HorizontalLegRaise_camera
 import SingleLeg_camera
 import wallWalk_leftHand_Camera
 import Ex7_90degreesLegRaise
+import calf
+import calf_stretch
+
 # Define a function to start exercises
 def start_Arm_Extension_Camera():
     threading.Thread(target=Arm_Extension_Camera.run_exercise).start()
@@ -26,6 +29,12 @@ def start_wallWalk_leftHand_Camera():
 
 def start_ex7_90degreesLegRaise():
     threading.Thread(target=Ex7_90degreesLegRaise.run_exercise).start()
+
+def start_calf():
+    threading.Thread(target=calf.run_exercise).start()
+
+def startcalf_stretch():
+    threading.Thread(target=calf_stretch.run_exercise).start()
 
 # Function to clear the current window and show the main page again
 def show_main_page(window):
@@ -113,8 +122,9 @@ def open_injury_page(window, injury_type):
     else:
         exercises = [
             ("Horizontal Leg Raise", start_HorizontalLegRaise_camera),
-            ("Single Leg", start_SingleLeg_camera),
-            ("Contraction of the thigh/calf", start_ex7_90degreesLegRaise)
+            #("Single Leg", start_SingleLeg_camera),
+            ("Contraction of the thigh/calf", start_ex7_90degreesLegRaise),
+            ("Calf Stretch", start_calf)
         ]
 
     # Add buttons for exercises
