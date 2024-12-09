@@ -4,6 +4,8 @@ import numpy as np
 import time
 import os
 from pygame import mixer
+import tkinter as tk
+import threading
 
 
 def calculate_angle(a, b, c):
@@ -23,10 +25,14 @@ def calculate_angle(a, b, c):
 
     return angle
 
-def run_exercise():
+def run_exercise(status_dict):
+    
     mp_drawing = mp.solutions.drawing_utils
-    mp_pose = mp.solutions.pose 
+    mp_pose = mp.solutions.pose
+
     cap = cv2.VideoCapture(0)
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
 
     reps = 0
     stage = 'down'  
@@ -34,9 +40,51 @@ def run_exercise():
     is_timer_active = False
     timer_remaining = timer_duration
     warning_message = None 
+    stop_exercise=False
+
+    def stop_exercise_callback():
+        nonlocal stop_exercise
+        stop_exercise = True
+
+       # Create Tkinter window for "Done" button
+    def create_tkinter_window():
+        root = tk.Tk()
+        root.title("Control Panel")
+        root.geometry("300x100")
+        root.configure(bg="#C5EBE8")
+
+        label = tk.Label(
+            root,
+            text="Leg Raise Exercise",
+            font=("Arial", 14),
+            bg="#C5EBE8",
+            fg="#008878"
+        )
+        label.pack(pady=10)
+
+        btn_done = tk.Button(
+            root,
+            text="Done",
+            command=lambda: [stop_exercise_callback(), root.destroy()],
+            font=("Arial", 14),
+            bg="#FF6347",
+            fg="white",
+            width=10
+        )
+        btn_done.pack(pady=10)
+
+        root.mainloop()
+
+    # Start the Tkinter window in a separate thread
+    threading.Thread(target=create_tkinter_window, daemon=True).start()
+
+
+
     mixer.init()
     success_path = os.path.join("sounds", "success.wav")
     success_sound = mixer.Sound(success_path)
+    countdown_path=os.path.join("sounds", "countdown.wav")
+    countdown_sound=mixer.Sound(countdown_path)
     lower_path = os.path.join("sounds", "loweryourleg.wav")
     lower_sound = mixer.Sound(lower_path)
     last_lower_sound_time = None  
@@ -48,9 +96,61 @@ def run_exercise():
     visible_sound=mixer.Sound(visible_path)
     great_path=os.path.join("sounds", "great.wav")
     great_sound=mixer.Sound(great_path)
+
+
+    countdown_complete = False
+
+    def display_countdown(image, seconds_remaining):
+        overlay = image.copy()
+        alpha = 0.6  # Transparency factor
+
+        # Create a semi-transparent rectangle for the countdown text
+        cv2.rectangle(overlay, (0, 0), (image.shape[1], image.shape[0]), (0, 0, 0), -1)
+        cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
+
+        # Display the countdown number in the center of the screen
+        cv2.putText(
+            image,
+            str(seconds_remaining),
+            (image.shape[1] // 2 - 50, image.shape[0] // 2),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            12,  # Font size
+            (255, 255, 255),
+            16,
+            cv2.LINE_AA
+        )
+        
+
+    # Perform the countdown
+    start_time = time.time()
+    countdown_sound.play()
+    while time.time() - start_time < timer_duration:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        seconds_remaining = int(timer_duration - (time.time() - start_time))
+        display_countdown(frame, seconds_remaining)
+        cv2.imshow("Leg Raise Exercise", frame)
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            cap.release()
+            cv2.destroyAllWindows()
+            return
+
+    # Set flag after countdown
+    countdown_complete = True
+
+
+
     # Setup Mediapipe Pose with specified confidence levels
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
+            
+            if stop_exercise:  # Check if "Done" button was pressed
+                status_dict["Ex7_90degreesLegRaise"] = True
+                break
+
+
             ret, frame = cap.read()
             if not ret:
                 break
@@ -213,6 +313,8 @@ def run_exercise():
     # Release resources
     cap.release()
     cv2.destroyAllWindows()
+    status_dict["Ex7_90degreesLegRaise"]= True
 
 if __name__ == "__main__":
-    run_exercise()
+    status_dict={"Ex7_90degreesLegRaise": False}
+    run_exercise(status_dict)
