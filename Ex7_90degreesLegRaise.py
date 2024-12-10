@@ -13,7 +13,7 @@ def calculate_angle(a, b, c):
     Calculate the angle between three points a, b, and c.
     """
     a = np.array(a)  # First point
-    b = np.array(b)  # Midpoint
+    b = np.array(b)  # Midpointf
     c = np.array(c)  # Endpoint
 
     radians = np.arctan2(c[1] - b[1], c[0] - b[0]) - np.arctan2(a[1] - b[1], a[0] - b[0])
@@ -25,28 +25,30 @@ def calculate_angle(a, b, c):
 
     return angle
 
+
 def run_exercise(status_dict):
-    
     mp_drawing = mp.solutions.drawing_utils
     mp_pose = mp.solutions.pose
 
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+    cv2.namedWindow('Leg Raise Exercise', cv2.WND_PROP_FULLSCREEN)
+    cv2.setWindowProperty('Leg Raise Exercise', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
     reps = 0
-    stage = 'down'  
-    timer_duration = 6  
+    stage = 'down'
+    timer_duration = 6
     is_timer_active = False
     timer_remaining = timer_duration
-    warning_message = None 
-    stop_exercise=False
+    warning_message = None
+    stop_exercise = False
 
     def stop_exercise_callback():
         nonlocal stop_exercise
         stop_exercise = True
 
-       # Create Tkinter window for "Done" button
+    # Create Tkinter window for "Done" button
     def create_tkinter_window():
         root = tk.Tk()
         root.title("Control Panel")
@@ -78,25 +80,22 @@ def run_exercise(status_dict):
     # Start the Tkinter window in a separate thread
     threading.Thread(target=create_tkinter_window, daemon=True).start()
 
-
-
     mixer.init()
     success_path = os.path.join("sounds", "success.wav")
     success_sound = mixer.Sound(success_path)
-    countdown_path=os.path.join("sounds", "countdown.wav")
-    countdown_sound=mixer.Sound(countdown_path)
+    countdown_path = os.path.join("sounds", "countdown.wav")
+    countdown_sound = mixer.Sound(countdown_path)
     lower_path = os.path.join("sounds", "loweryourleg.wav")
     lower_sound = mixer.Sound(lower_path)
-    last_lower_sound_time = None  
-    upper_path=os.path.join("sounds", "goupper.wav")
-    upper_sound=mixer.Sound(upper_path)
-    golower_path=os.path.join("sounds", "golower.wav")
-    golower_sound=mixer.Sound(golower_path)
-    visible_path=os.path.join("sounds", "visible.wav")
-    visible_sound=mixer.Sound(visible_path)
-    great_path=os.path.join("sounds", "great.wav")
-    great_sound=mixer.Sound(great_path)
-
+    last_lower_sound_time = None
+    upper_path = os.path.join("sounds", "goupper.wav")
+    upper_sound = mixer.Sound(upper_path)
+    golower_path = os.path.join("sounds", "golower.wav")
+    golower_sound = mixer.Sound(golower_path)
+    visible_path = os.path.join("sounds", "visible.wav")
+    visible_sound = mixer.Sound(visible_path)
+    great_path = os.path.join("sounds", "great.wav")
+    great_sound = mixer.Sound(great_path)
 
     countdown_complete = False
 
@@ -119,7 +118,6 @@ def run_exercise(status_dict):
             16,
             cv2.LINE_AA
         )
-        
 
     # Perform the countdown
     start_time = time.time()
@@ -140,16 +138,13 @@ def run_exercise(status_dict):
     # Set flag after countdown
     countdown_complete = True
 
-
-
     # Setup Mediapipe Pose with specified confidence levels
     with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
         while cap.isOpened():
-            
+
             if stop_exercise:  # Check if "Done" button was pressed
                 status_dict["Ex7_90degreesLegRaise"] = True
                 break
-
 
             ret, frame = cap.read()
             if not ret:
@@ -197,7 +192,7 @@ def run_exercise(status_dict):
                         # Calculate the angle between hip, knee, and ankle
                         angle = calculate_angle(hip, knee, ankle)
 
-                        # Visualize the angle 
+                        # Visualize the angle
                         cv2.putText(image, str(int(angle)),
                                     tuple(np.multiply(knee, [640, 480]).astype(int)),
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
@@ -207,8 +202,8 @@ def run_exercise(status_dict):
                             warning_message = "Leg is too down. Raise your leg."
                             current_time = time.time()
                             if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
-                                    upper_sound.play()
-                                    last_lower_sound_time = current_time
+                                upper_sound.play()
+                                last_lower_sound_time = current_time
                             if stage == 'hold' or stage == 'up':
                                 # Leg has been lowered, reset for next rep
                                 stage = 'down'
@@ -219,8 +214,8 @@ def run_exercise(status_dict):
                             warning_message = "Leg is too up. Lower your leg."
                             current_time = time.time()
                             if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
-                                    golower_sound.play()
-                                    last_lower_sound_time = current_time
+                                golower_sound.play()
+                                last_lower_sound_time = current_time
                         else:
 
                             # Angle is between 85 and 97 degrees
@@ -231,8 +226,8 @@ def run_exercise(status_dict):
                                 stage = 'up'
                                 current_time = time.time()
                                 if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
-                                        great_sound.play()
-                                        last_lower_sound_time = current_time
+                                    great_sound.play()
+                                    last_lower_sound_time = current_time
                             elif stage == 'up':
                                 # Continue timing
                                 elapsed_time = time.time() - timer_start
@@ -252,7 +247,7 @@ def run_exercise(status_dict):
                                         last_lower_sound_time = current_time
                             elif stage == 'hold':
                                 warning_message = "Lower your leg"
-                                
+
 
                 else:
                     warning_message = "Pose not detected. Make sure full body is visible."
@@ -284,9 +279,11 @@ def run_exercise(status_dict):
             # Display warning message
             if warning_message:
                 if warning_message == "Good Job! Keep Going":
-                    cv2.putText(image, warning_message, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2, cv2.LINE_AA)
+                    cv2.putText(image, warning_message, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2,
+                                cv2.LINE_AA)
                 else:
-                    cv2.putText(image, warning_message, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2, cv2.LINE_AA)
+                    cv2.putText(image, warning_message, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2,
+                                cv2.LINE_AA)
 
             # Display timer if active
             if is_timer_active:
@@ -313,8 +310,9 @@ def run_exercise(status_dict):
     # Release resources
     cap.release()
     cv2.destroyAllWindows()
-    status_dict["Ex7_90degreesLegRaise"]= True
+    status_dict["Ex7_90degreesLegRaise"] = True
+
 
 if __name__ == "__main__":
-    status_dict={"Ex7_90degreesLegRaise": False}
+    status_dict = {"Ex7_90degreesLegRaise": False}
     run_exercise(status_dict)
