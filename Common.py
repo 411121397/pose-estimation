@@ -98,6 +98,30 @@ def display_countdown(image, seconds_remaining):
             cv2.LINE_AA
         )
 
+def perform_countdown(cap, countdown_sound, timer_duration, display_countdown, window_name="Exercise Countdown"):
+    start_time = time.time()
+    countdown_sound.play()
+
+    while time.time() - start_time < timer_duration:
+        ret, frame = cap.read()
+        if not ret:
+            print("Camera frame not available.")
+            return False
+
+        seconds_remaining = int(timer_duration - (time.time() - start_time))
+        display_countdown(frame, seconds_remaining)
+        cv2.imshow(window_name, frame)
+
+        # Break loop if 'q' key is pressed
+        if cv2.waitKey(10) & 0xFF == ord('q'):
+            cap.release()
+            cv2.destroyAllWindows()
+            print("Countdown interrupted.")
+            return False
+
+    return True
+
+
 def create_feedback_overlay(image, warning_message=None, counter=None, reps=None):
     """
     Add feedback overlays for warnings, counters, and repetitions.
