@@ -169,8 +169,8 @@ def run_exercise(status_dict):
             mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                       mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
                                       mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
-            current_timer = timer_remaining if timer_remaining is not None else 0
-            image = create_feedback_overlay(image, counter=current_timer, reps=reps)
+            current_timer = int(timer_remaining) if timer_remaining is not None else 0
+            image = create_feedback_overlay(image, warning_message=warning_message, counter=current_timer, reps=reps)
             cv2.imshow('Leg Raise Exercise', image)
 
             # Break the loop if 'q' key is pressed
