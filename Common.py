@@ -24,6 +24,8 @@ timer_duration = 6
 is_timer_active = False
 timer_remaining = timer_duration
 stop_exercise = False
+counter_box_height = 120
+counter_box_width = 250
 
 def calculate_angle(a, b, c):
     """
@@ -96,19 +98,37 @@ def display_countdown(image, seconds_remaining):
             cv2.LINE_AA
         )
 
-def show_boxes():
-    cap = cv2.VideoCapture(0)
-    ret, frame = cap.read()
-    image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+def create_feedback_overlay(image, warning_message=None, counter=None, reps=None):
+    """
+    Add feedback overlays for warnings, counters, and repetitions.
+    """
     overlay = image.copy()
+
+    # Feedback box
     feedback_box_height = 80
     cv2.rectangle(overlay, (0, 0), (1280, feedback_box_height), (232, 235, 197), -1)
-    counter_box_height = 120
-    counter_box_width = 250
+
+    # Counter box at bottom-left
     cv2.rectangle(overlay, (0, 720 - counter_box_height), (counter_box_width, 720), (232, 235, 197), -1)
-    cv2.rectangle(overlay, (1280 - counter_box_width, 720 - counter_box_height), (1280, 720 ), (232, 235, 197), -1)
+
+    # Counter box at bottom-right
+    cv2.rectangle(overlay, (1280 - counter_box_width, 720 - counter_box_height), (1280, 720), (232, 235, 197), -1)
 
     # Blend overlay with the original image to make boxes transparent
     alpha = 0.5  # Transparency factor
     cv2.addWeighted(overlay, alpha, image, 1 - alpha, 0, image)
+
+    # Display warning message
+    if warning_message:
+        color = (0, 255, 0) if "Good Job" in warning_message else (0, 0, 255)
+        cv2.putText(image, warning_message, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, color, 3, cv2.LINE_AA)
+
+    # Render counters
+    if counter is not None:
+        cv2.putText(image, str(counter), (20, 720 - 30), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 0), 4, cv2.LINE_AA)
+    if reps is not None:
+        cv2.putText(image, "REPS", (1280 - counter_box_width , 720 - 70), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 0), 1, cv2.LINE_AA)
+        cv2.putText(image, str(reps), (1280 - counter_box_width + 8, 720 - 10), cv2.FONT_HERSHEY_SIMPLEX, 1.5, (0, 0, 0), 2, cv2.LINE_AA)
+
+    return image
 
