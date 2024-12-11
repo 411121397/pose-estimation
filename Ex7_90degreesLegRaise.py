@@ -29,20 +29,13 @@ def run_exercise(status_dict):
    
 
     # Perform the countdown
-    start_time = time.time()
-    countdown_sound.play()
-    while time.time() - start_time < timer_duration:
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        seconds_remaining = int(timer_duration - (time.time() - start_time))
-        display_countdown(frame, seconds_remaining)
-        cv2.imshow("Leg Raise Exercise", frame)
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-            cap.release()
-            cv2.destroyAllWindows()
-            return
+    countdown_complete = perform_countdown(
+        cap=cap,
+        countdown_sound=countdown_sound,
+        timer_duration=timer_duration,
+        display_countdown=display_countdown,
+        window_name="Leg Raise Exercise"
+    )
 
     # Set flag after countdown
     countdown_complete = True
