@@ -21,6 +21,10 @@ exercise_status={
 
 video_path = r"C:\Users\Carl\Desktop\pose-estim\pose-estimation\poseVideos\tutorial.mp4"
 
+#video_path = r"C:\Users\Notnik_kg\Desktop\PoseEstimation\poseVideos\6.mp4"
+
+
+
 
 # Define a function to start exercises
 def start_Arm_Extension_Camera():
