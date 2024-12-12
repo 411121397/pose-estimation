@@ -21,8 +21,9 @@ def run_exercise(status_dict):
     stage = 'down'
     warning_message = None
     last_lower_sound_time=None
-    timer_remaining = None 
-
+    timer_remaining = None
+    is_timer_active = False
+    last_beep_time=None
     # Start the Tkinter window in a separate thread
     threading.Thread(target=create_tkinter_window, daemon=True).start()
 
@@ -100,53 +101,64 @@ def run_exercise(status_dict):
                                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 2, cv2.LINE_AA)
 
                         # Exercise logic with state machine
+
                         if angle > 97:
                             warning_message = "Leg is too down. Raise your leg."
                             current_time = time.time()
+                            cv2.putText(image, "↑", (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 4, cv2.LINE_AA)
                             if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
                                 upper_sound.play()
                                 last_lower_sound_time = current_time
-                            if stage == 'hold' or stage == 'up':
-                                # Leg has been lowered, reset for next rep
-                                stage = 'down'
+                            if stage in ['hold', 'up']:
+                                # Leg is too low; freeze timer
                                 is_timer_active = False
-                                timer_remaining = timer_duration
-                                last_lower_sound_time = None  # Reset lower sound timer
+                                stage = 'too_low'
+
                         elif angle < 85:
                             warning_message = "Leg is too up. Lower your leg."
                             current_time = time.time()
                             if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
                                 golower_sound.play()
                                 last_lower_sound_time = current_time
-                        else:
+                            if stage in ['hold', 'up']:
+                                # Leg is too high; freeze timer
+                                is_timer_active = False
+                                stage = 'too_high'
 
+                        else:
                             # Angle is between 85 and 97 degrees
-                            if stage == 'down':
-                                # Start timer
-                                timer_start = time.time()
+                            if stage in ['down', 'too_high', 'too_low']:
+                                # Start or resume timer
+                                if not is_timer_active:
+                                    timer_start = time.time() - (Hold_duration - timer_remaining if timer_remaining else 0)
                                 is_timer_active = True
                                 stage = 'up'
-                                current_time = time.time()
-                                if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
+                                last_lower_sound_time = None  # Reset lower sound timer
+                                if last_beep_time is None or timer_remaining < last_beep_time:
                                     great_sound.play()
-                                    last_lower_sound_time = current_time
-                            elif stage == 'up':
+                                    last_beep_time = timer_remaining
+
+                            if stage == 'up' and is_timer_active:
                                 # Continue timing
                                 elapsed_time = time.time() - timer_start
-                                timer_remaining = timer_duration - elapsed_time
+                                timer_remaining = max(0, int(Hold_duration - elapsed_time))
+
+                                if last_beep_time is None or timer_remaining < last_beep_time:
+                                    beep_sound.play()
+                                    last_beep_time = timer_remaining
+
                                 if timer_remaining <= 0:
                                     # Rep completed
                                     success_sound.play()
                                     warning_message = "Great! Hold Completed!"
                                     reps += 1
                                     is_timer_active = False
-                                    timer_remaining = timer_duration
-                                    stage = 'hold'  # Waiting for leg to be lowered
-                                    last_lower_sound_time = None  # Reset lower sound timer
-                                    current_time = time.time()
-                                    if last_lower_sound_time is None or (current_time - last_lower_sound_time) >= 5:
-                                        lower_sound.play()
-                                        last_lower_sound_time = current_time
+                                    timer_remaining = Hold_duration
+                                    stage = 'hold'
+                                    last_beep_time = None
+                                    last_lower_sound_time = None
+                                            
+
                             elif stage == 'hold':
                                 warning_message = "Lower your leg"
 
@@ -168,8 +180,9 @@ def run_exercise(status_dict):
             # Draw pose landmarks on the image
             mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS,
                                       mp_drawing.DrawingSpec(color=(245, 117, 66), thickness=2, circle_radius=2),
-                                      mp_drawing.DrawingSpec(color=(245, 66, 230), thickness=2, circle_radius=2))
+                                      mp_drawing.DrawingSpec(color=(44,42,196) if (stage in ['too_high', 'too_low']) else (67,196,42), thickness=2, circle_radius=2))
             current_timer = int(timer_remaining) if timer_remaining is not None else 0
+            
             image = create_feedback_overlay(image, warning_message=warning_message, counter=current_timer, reps=reps)
             cv2.imshow('Leg Raise Exercise', image)
 
